@@ -1,0 +1,11 @@
+
+wheel
+annotated-types
+fastapi
+Jinja2
+pytest
+python-dotenv
+python-multipart
+requests
+typing
+uvicorn
