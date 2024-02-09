@@ -130,3 +130,61 @@ not : Retourne l'inverse de la valeur booléenne de l'expression suivant l'opér
 
 
    #### Pour avoir le reload automatique
+
+
+
+
+1. Prérequis
+Avant de commencer, assurez-vous d'avoir les éléments suivants :
+
+Un compte Azure actif.
+Une application FastAPI prête à être déployée.
+Docker installé sur votre machine locale.
+2. Dockerfile
+Assurez-vous d'avoir un Dockerfile pour votre application FastAPI. Le Dockerfile spécifie comment construire l'image Docker de votre application.
+
+Voici un exemple de Dockerfile pour une application FastAPI :
+
+Dockerfile
+Copy code
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+
+COPY ./app /app
+Assurez-vous d'ajuster le chemin vers votre application FastAPI si nécessaire.
+
+3. Construction de l'image Docker
+Construisez l'image Docker de votre application FastAPI en exécutant la commande suivante dans le répertoire de votre projet (où se trouve votre Dockerfile) :
+
+bash
+Copy code
+docker build -t nom_image .
+Remplacez nom_image par le nom que vous souhaitez donner à votre image Docker.
+
+4. Connexion à Azure
+Connectez-vous à votre compte Azure en exécutant la commande suivante :
+
+bash
+Copy code
+az login
+Suivez les instructions pour vous connecter à votre compte Azure.
+
+5. Création d'un groupe de ressources
+Créez un groupe de ressources Azure pour votre application en exécutant la commande suivante :
+
+bash
+Copy code
+az group create --name mon-groupe-ressources --location emplacement
+Remplacez mon-groupe-ressources par le nom que vous souhaitez donner à votre groupe de ressources et emplacement par la région Azure de votre choix.
+
+6. Déploiement sur Azure App Service
+Déployez votre application sur Azure App Service en exécutant la commande suivante :
+
+bash
+Copy code
+az webapp up --name nom_webapp --resource-group mon-groupe-ressources --sku F1 --docker-registry-image nom_image
+Remplacez nom_webapp par le nom que vous souhaitez donner à votre application web, mon-groupe-ressources par le nom de votre groupe de ressources, nom_image par le nom de l'image Docker que vous avez construite.
+
+7. Accès à votre application
+Une fois le déploiement terminé, vous pouvez accéder à votre application en ouvrant le navigateur et en naviguant vers l'URL fournie par Azure App Service.
+
+Voilà ! Votre application FastAPI est maintenant déployée sur Azure App Service et accessible en ligne.
