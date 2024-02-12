@@ -8,7 +8,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Utilisateur fictif avec des informations d'identification
+
 fake_user = {"username": "admin", "password": "password"}
 
 @app.get("/", response_class=HTMLResponse)
