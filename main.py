@@ -34,5 +34,6 @@ async def error():
     return "<h1>Login error</h1>"
 
 
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="localhost", port=8000, reload=True)
