@@ -1,3 +1,5 @@
+from multiprocessing import context
+from urllib import response
 from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -84,22 +86,22 @@ async def list_articles(request: Request):
     cursor.execute("SELECT title, content , article_id FROM articles")
     articles = cursor.fetchall()
     articles_list = [{"title": article[0], "content": article[1] , "article_id": article[2]} for article in articles]
-    return templates.TemplateResponse("articles_list.html", {"request": request, "articles": articles_list})
+    return templates.TemplateResponse("articles_list.html", context={"request": request, "articles": articles_list})
 
 
 # Route pour afficher le formulaire de modification d'article (GET)
 @app.get("/articles/{article_id}/update", response_class=HTMLResponse)
 async def update_article_form(request: Request, article_id: int):
-    cursor.execute("SELECT title, content FROM articles WHERE article_id = ?", (article_id,))
+    cursor.execute("SELECT title, content, article_id FROM articles WHERE article_id = ?", (article_id,))
     article = cursor.fetchone()
-    return templates.TemplateResponse("update_article.html", {"request": request, "article_id": article_id, "article": article})
+    print(article)
+    return templates.TemplateResponse("update_article.html", context={"article": article,"request": request})
 
 # Route pour traiter les données du formulaire de modification d'article (POST)
 @app.post("/articles/{article_id}/update", response_class=HTMLResponse)
 async def update_article(request: Request, article_id: int, title: str = Form(...), content: str = Form(...)):
-    cursor.execute("UPDATE articles SET title = ?, content = ? WHERE id = ?", (title, content, article_id))
+    cursor.execute("UPDATE articles SET title = ?, content = ? WHERE article_id = ?", (title, content, article_id))
     conn.commit()
-    
     return RedirectResponse(url="/articles", status_code=303)
 
 
@@ -110,6 +112,13 @@ async def delete_article_form(request: Request, article_id: int):
     article = cursor.fetchone()
     return templates.TemplateResponse("delete_article.html", {"request": request, "article_id": article_id, "article": article})
 
+@app.post("/articles/{article_id}/test", response_class=HTMLResponse)
+async def test(request: Request, article_id: int, title: str = Form(...), content: str = Form(...)):
+    cursor.execute("DELETE FROM articles WHERE article_id = ?", (article_id,))
+    conn.commit()
+    return RedirectResponse(url="/articles", status_code=303)
+    
+    
 
 
 if __name__ == "__main__":
