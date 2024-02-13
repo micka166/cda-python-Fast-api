@@ -1,0 +1,19 @@
+<!-- update_article.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier l'article</title>
+</head>
+<body>
+    <h1>Modifier l'article</h1>
+    <form action="/articles/{ article.id }/update" method="post">
+        <label for="title">Titre:</label><br>
+        <input type="text" id="title" name="title" value="{{ article.title }}"><br>
+        <label for="content">Contenu:</label><br>
+        <textarea id="content" name="content">{{ article.content }}</textarea><br>
+        <button type="submit">Enregistrer les modifications</button>
+    </form>
+</body>
+</html>

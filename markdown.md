@@ -129,7 +129,11 @@ not : Retourne l'inverse de la valeur booléenne de l'expression suivant l'opér
 ```
 
 
-   #### Pour avoir le reload automatique
+   #### Pour avoir le reload automatique voir au dessus 
+
+
+
+   # Deploiement Azure sur cette exercice
 
 
 
@@ -188,3 +192,122 @@ Remplacez nom_webapp par le nom que vous souhaitez donner à votre application w
 Une fois le déploiement terminé, vous pouvez accéder à votre application en ouvrant le navigateur et en naviguant vers l'URL fournie par Azure App Service.
 
 Voilà ! Votre application FastAPI est maintenant déployée sur Azure App Service et accessible en ligne.
+
+
+
+
+# exception sur les valeurs d'erreurs 
+
+
+```python
+
+def division(a, b):
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        print("Erreur : Division par zéro n'est pas autorisée")
+        result = None
+    return result
+
+numerator = 10
+denominator = 0
+
+result = division(numerator, denominator)
+if result is not None:
+    print("Le résultat de la division est :", result)
+else:
+    print("La division a échoué.")
+
+
+```
+
+# Liste d'exception que python prends en charge
+
+1. **Exception** : La classe de base pour toutes les exceptions.
+
+2. **ArithmeticError** : La classe de base pour toutes les erreurs arithmétiques.
+
+3. **OverflowError** : Levée lorsqu'une opération numérique dépasse la limite de capacité d'un type numérique.
+   
+4. **ZeroDivisionError** : Levée lorsqu'une division ou un modulo par zéro est tenté.
+
+5. **FloatingPointError** : Levée lorsqu'une erreur de point flottant se produit.
+
+6. **AssertionError** : Levée lorsqu'une instruction assert échoue.
+
+7.  **AttributeError** : Levée lorsqu'un attribut référencé n'est pas trouvé.
+
+8.  **EOFError** : Levée lorsqu'il n'y a plus d'entrée à lire dans une fonction intégrée input().
+
+9.  **ImportError** : Levée lorsqu'un module importé ne peut pas être trouvé.
+
+10. **IndexError** : Levée lorsqu'un index d'une séquence est hors de portée.
+
+11. **KeyError** : Levée lorsqu'une clé de dictionnaire n'est pas trouvée.
+
+12. **NameError** : Levée lorsqu'un nom n'est pas trouvé localement ou globalement.
+
+13. **NotImplementedError** : Levée lorsqu'une fonctionnalité n'est pas implémentée dans une classe ou un module donné.
+
+14. **TypeError** : Levée lorsqu'une opération ou une fonction est appliquée à un objet de type incorrect.
+
+15. **ValueError** : Levée lorsqu'une fonction reçoit un argument du bon type mais avec une valeur inappropriée.
+
+16. **FileNotFoundError** : Levée lorsqu'un fichier ou un répertoire n'est pas trouvé.
+
+17. **PermissionError** : Levée lorsqu'un opération n'est pas autorisée en raison de permissions insuffisantes.
+
+18. **OSError** : La classe de base pour les exceptions liées au système d'exploitation.
+
+
+# Lecture & écriture de fichiers sur le language python
+
+En Python, vous pouvez lire et écrire des fichiers en utilisant les fonctions open(), read(), write() et close(). Voici un exemple de lecture et d'écriture de fichiers en Python :
+
+## Methode pour lire les fichiers
+```python 
+
+# Ouvrir un fichier en mode lecture
+with open('mon_fichier.txt', 'r') as fichier:
+    # Lire le contenu du fichier ligne par ligne
+    for ligne in fichier:
+        print(ligne.strip())  # Afficher chaque ligne (strip() pour retirer les sauts de ligne)
+
+# Le fichier est automatiquement fermé à la fin du bloc "with"  
+```
+
+## Méthode pour ecrire les fichiers 
+
+```python
+
+# Ouvrir un fichier en mode écriture
+with open('nouveau_fichier.txt', 'w') as fichier:
+    # Écrire dans le fichier
+    fichier.write("Ceci est une nouvelle ligne.\n")
+    fichier.write("Voici une autre ligne.")
+
+# Le fichier est automatiquement fermé à la fin du bloc "with"
+
+```
+
+| Caractère | Signification                                           |
+|-----------|---------------------------------------------------------|
+| `'r'`     | ouvre en lecture (par défaut)                          |
+| `'w'`     | ouvre en écriture, en effaçant le contenu du fichier   |
+| `'x'`     | ouvre pour une création exclusive, échouant si le fichier existe déjà |
+| `'a'`     | ouvre en écriture, ajoutant à la fin du fichier s'il existe |
+| `'b'`     | mode binaire                                            |
+| `'t'`     | mode texte (par défaut)                                 |
+| `'+'`     | ouvre en modification (lecture et écriture)            |
+
+
+# Commande pour lire rapidement des fichiers 
+
+| Commande                            | Description                                                                                       | Exemple d'utilisation         |
+|-------------------------------------|---------------------------------------------------------------------------------------------------|-------------------------------|
+| `wc [nom_fichier]`                  | Compte le nombre de lignes, de mots et de caractères dans le fichier spécifié.                   | `wc votre_fichier.txt`       |
+| `wc -l [nom_fichier]`               | Compte uniquement le nombre de lignes dans le fichier spécifié.                                  | `wc -l votre_fichier.txt`    |
+| `wc -w [nom_fichier]`               | Compte uniquement le nombre de mots dans le fichier spécifié.                                    | `wc -w votre_fichier.txt`    |
+| `wc -c [nom_fichier]`               | Compte uniquement le nombre de caractères dans le fichier spécifié.                               | `wc -c votre_fichier.txt`    |
+| `wc -m [nom_fichier]`               | Compte uniquement le nombre de caractères multioctets dans le fichier spécifié.                  | `wc -m votre_fichier.txt`    |
+| `wc -L [nom_fichier]`               | Affiche la longueur de la ligne la plus longue dans le fichier spécifié.                         | `wc -L votre_fichier.txt`    |
