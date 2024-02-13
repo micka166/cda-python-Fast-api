@@ -81,16 +81,16 @@ async def create_article(title: str = Form(...), content: str = Form(...)):
 # Route pour afficher la liste des articles (GET)
 @app.get("/articles", response_class=HTMLResponse)
 async def list_articles(request: Request):
-    cursor.execute("SELECT title, content FROM articles")
+    cursor.execute("SELECT title, content , article_id FROM articles")
     articles = cursor.fetchall()
-    articles_list = [{"title": article[0], "content": article[1]} for article in articles]
+    articles_list = [{"title": article[0], "content": article[1] , "article_id": article[2]} for article in articles]
     return templates.TemplateResponse("articles_list.html", {"request": request, "articles": articles_list})
 
 
 # Route pour afficher le formulaire de modification d'article (GET)
 @app.get("/articles/{article_id}/update", response_class=HTMLResponse)
 async def update_article_form(request: Request, article_id: int):
-    cursor.execute("SELECT title, content FROM articles WHERE id = ?", (article_id,))
+    cursor.execute("SELECT title, content FROM articles WHERE article_id = ?", (article_id,))
     article = cursor.fetchone()
     return templates.TemplateResponse("update_article.html", {"request": request, "article_id": article_id, "article": article})
 
@@ -102,19 +102,14 @@ async def update_article(request: Request, article_id: int, title: str = Form(..
     # Redirection vers la route pour afficher la liste des articles
     return RedirectResponse(url="/articles", status_code=303)
 
-@app.post("/articles/delete")
-async def delete_article_by_title(title: str = Form(...)):
-    # Recherche de l'article par le titre
-    cursor.execute("SELECT id FROM articles WHERE title = ?", (title,))
+
+# Route pour supprimer un article (GET)
+@app.get("/articles/{article_id}/delete", response_class=HTMLResponse)
+async def delete_article_form(request: Request, article_id: int):
+    cursor.execute("SELECT title , content FROM articles WHERE article_id = ?", (article_id,))
     article = cursor.fetchone()
-    if article:
-        article_id = article[0]  # Récupérer l'ID de l'article trouvé
-        cursor.execute("DELETE FROM articles WHERE id = ?", (article_id,))
-        conn.commit()
-        return RedirectResponse(url="/articles", status_code=303)
-    else:
-        # Si aucun article correspondant au titre n'est trouvé, renvoyer une erreur
-        return {"message": "Article not found"}
+    return templates.TemplateResponse("delete_article.html", {"request": request, "article_id": article_id, "article": article})
+
 
 
 if __name__ == "__main__":

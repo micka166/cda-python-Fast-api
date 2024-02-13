@@ -33,10 +33,9 @@
             <div class="article-card">
                 <h2 class="article-title">{{ article.title }}</h2>
                 <p class="article-content">{{ article.content }}</p>
-                <a class="update-link" href="/articles/{article_id}/update">Modifier</a>
-                <form action="/articles/delete" method="post">
-                    <button type="submit" class="delete-link">Supprimer</button>
-                </form>
+                <a class="update-link" href="/articles/{{article.article_id}}/update">Modifier</a>
+                <a class="delete-link" href="/articles/{{article.article_id}}/delete">Supprimer</a>
+               
                 
             </div>
         {% endfor %}
