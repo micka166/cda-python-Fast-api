@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Modifier l'article</h1>
-    <form action="/articles/{ article.id }/update" method="post">
+    <form action="/articles/{{article.article_id}}/update" method="post">
         <label for="title">Titre:</label><br>
         <input type="text" id="title" name="title" value="{{ article.title }}"><br>
         <label for="content">Contenu:</label><br>

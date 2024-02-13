@@ -99,7 +99,7 @@ async def update_article_form(request: Request, article_id: int):
 async def update_article(request: Request, article_id: int, title: str = Form(...), content: str = Form(...)):
     cursor.execute("UPDATE articles SET title = ?, content = ? WHERE id = ?", (title, content, article_id))
     conn.commit()
-    # Redirection vers la route pour afficher la liste des articles
+    
     return RedirectResponse(url="/articles", status_code=303)
 
 
