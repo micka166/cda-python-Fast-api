@@ -1,8 +1,10 @@
 from multiprocessing import context
 from urllib import response
-from fastapi import FastAPI, Request, Form, HTTPException
+from fastapi import FastAPI, Request, Form, HTTPException , Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from typing import List, Optional
+from pydantic import BaseModel
 import sqlite3
 import uvicorn
 
@@ -45,8 +47,77 @@ async def login(username: str = Form(...), password: str = Form(...)):
         return RedirectResponse(url="/success", status_code=303)
     else:
         raise HTTPException(status_code=401, detail="Invalid username or password")
+    
+# #! PAGE DE L'ESPACE UTILISATEUR
 
+@app.get("/user", response_class=HTMLResponse)
+async def user_space(request: Request, username: str = Cookie(None)):
+    if not username:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    cursor.execute("SELECT article_id, title, content FROM articles WHERE username = ?", (username,))
+    articles = cursor.fetchall()
+    articles_list = [{"article_id": article[0], "title": article[1], "content": article[2]} for article in articles]
+    
+    return templates.TemplateResponse("success.html", {"request": request, "username": username, "articles": articles_list})
+   
+# #!PARTIE CRUD UTILISATEUR
 
+class Article(BaseModel):
+    title: str
+    content: str
+    category: str
+    user_id: int
+
+# Opération Create (Créer) : Créer un nouvel article
+@app.post("/user/article", response_model=HTMLResponse)
+def create_article_user(article: Article):
+    cursor.execute('''INSERT INTO articles (title, content, category, user_id)
+                      VALUES (?, ?, ?, ?)''', (article.title, article.content, article.category, article.user_id))
+    conn.commit()
+    return RedirectResponse(url="/user", status_code=303)
+
+# Opération Read (Lire) : Récupérer tous les articles d'un utilisateur
+@app.get("/user/{user_id}/articles", response_class=HTMLResponse)
+def read_user_articles(user_id: int):
+    cursor.execute('''SELECT * FROM articles WHERE user_id = ?''', (user_id,))
+    user_articles = cursor.fetchall()
+    if not user_articles:
+        raise HTTPException(status_code=404, detail="Aucun article trouvé pour cet utilisateur")
+    
+    articles_html = "<h2>Articles de l'utilisateur</h2>"
+    for article in user_articles:
+        articles_html += f"<p>Titre: {article[1]}, Contenu: {article[2]}, Catégorie: {article[3]}</p>"
+
+    return HTMLResponse(content=f"<html><body>{articles_html}</body></html>")
+
+# Opération Update (Mettre à jour) : Mettre à jour un article existant
+@app.put("/user/article/{article_id}", response_model=HTMLResponse)
+def update_article_user(article_id: int, article: Article):
+    cursor.execute('''SELECT * FROM articles WHERE id = ?''', (article_id,))
+    existing_article = cursor.fetchone()
+    if not existing_article:
+        raise HTTPException(status_code=404, detail="Article non trouvé")
+    
+    cursor.execute('''UPDATE articles SET title=?, content=?, category=? WHERE id=?''', 
+                   (article.title, article.content, article.category, article_id))
+    conn.commit()
+    
+    return RedirectResponse(url=f"/user/{existing_article[4]}/articles", status_code=303)
+# Opération Delete (Supprimer) : Supprimer un article existant
+@app.delete("/user/article/{article_id}", response_model=HTMLResponse)
+def delete_article_user(article_id: int):
+    cursor.execute('''SELECT * FROM articles WHERE id = ?''', (article_id,))
+    existing_article = cursor.fetchone()
+    if not existing_article:
+        raise HTTPException(status_code=404, detail="Article non trouvé")
+    
+    cursor.execute('''DELETE FROM articles WHERE id = ?''', (article_id,))
+    conn.commit()
+    
+    return RedirectResponse(url=f"/user/{existing_article[4]}/articles", status_code=303)
+    
+#! --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.get("/signup", response_class=HTMLResponse)
 async def signup_form(request: Request):
     return templates.TemplateResponse("signup.html", {"request": request})
@@ -118,7 +189,7 @@ async def test(request: Request, article_id: int, title: str = Form(...), conten
     conn.commit()
     return RedirectResponse(url="/articles", status_code=303)
     
-    
+
 
 
 if __name__ == "__main__":
